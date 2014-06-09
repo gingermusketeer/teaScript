@@ -67,6 +67,9 @@ Note this is very early stage and definitely contains traces of javascript. Synt
 
   renderedProducts =  <ul><li>Pizza</li></ul>
   //=> renderedProducts = new MyDomWrapper('<ul><li>Pizza</li></ul>')
+
+  // Unwrap helper
+  return <- mything //=> return mything.unwrap()
 ```
 
 #### Explicit variable type conversion
