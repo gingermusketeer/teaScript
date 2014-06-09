@@ -139,6 +139,52 @@ If self is used then the function is automatically bound to the correct context
   */
 ```
 
+### Simplified prototypical inheritance
+
+Calling proto() will call the method with the same name in the prototype
+
+```js
+
+  function Animal(){}
+
+  a = new Animal()
+
+  a.has4Legs = function(){
+    return proto()
+  }
+  //=>
+  /*
+  a.has4Legs = function(){
+    return this.prototype.apply(this, arguments)
+  }
+  */
+
+```
+
+### module system
+
+Should be interoperable with common/AMD/es6 but allow dependency injection for testing purposes
+
+```js
+
+ import {
+   express
+   stdlib/String as MyString
+ }
+
+ express.createServer()
+
+ //=>
+ /*
+  module.exports = {
+    deps: ['express', {MyString: 'stdlib/String'}]
+    run: function(express, MyString){
+      express.createServer()
+    }
+  }
+ */
+```
+
 ### context
 Allows functions to be executed in a context
 
