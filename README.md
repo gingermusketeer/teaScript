@@ -3,17 +3,19 @@
 Note this is very early stage and definitely contains traces of javascript. Syntax is by no means anything close to final
 
 ##Goals
-- Fix js weird/broken/anoying behaviour
+- Superset of javascript. Without driving you to drink coffee
+- Preserve line numbers by compiling line to line
+- Fix js weird/broken/annoying behaviour
 - Prevent bikeshedding
   - Style build in e.g tabs or spaces not both
-- Version control friendly
-  - No commas or required trailing commas
+  - Most likely do this go style with a standard formatting tool
+  - Version control friendly
+    - No commas or required trailing commas
 - Compile time access to AST
 - Scoped primitives
 - Take advantage of improvements to js transparently
 - Provide tooling that encourages good software
  - Built in support for documentation
-
 
 
 ##Features
@@ -29,13 +31,18 @@ Note this is very early stage and definitely contains traces of javascript. Synt
 
   someString = 'CamelCaseString'.toUnderscoreCase()
   //=> (new MyStringLib('CamelCaseString')).toUnderscoreCase()
-
+  //=> myStringLib.toUnderscoreCase.call('CamelCaseString')
+  //=> try('toUnderscoreCase', strToUnderScoreCase)
 
   // Fixed number type
 
   num1 = 10.7 //=> new BigNumber('10.7')
   num2 = 0.3 //=> new BigNumber('0.3')
   sum = num1 + num2 //=> num1['+'](num2)
+  complex = num1 + num2 * num1 / num2
+  // Apply js operator precedence rules i.e bedmas
+  //-> num1+(num2 *(num1/num2))
+  //=> num1['+'](num2['*'](num1['/'](num2)))
 
   // Date primitive
 
@@ -72,9 +79,17 @@ Note this is very early stage and definitely contains traces of javascript. Synt
   return <- mything //=> return mything.unwrap()
 ```
 
+Could use some sort of resolver to handle dealing with primitive operations and redeclaration of built in types
+
+primativeResolver('+', someVar, someOtherVar)
+
+for strings we could perhaps extend existing string object or for methods we could replace someVar.toCamelCase with prototype call with this provided
+
 #### Explicit variable type conversion
 
 When a scoped primitive has been loaded variables/parameters can automatically be converted
+
+Note this is only required for primatives which do not extend existing js primatives
 
 ```js
   // Convert parameter
@@ -189,19 +204,27 @@ Should be interoperable with common/AMD/es6 but allow dependency injection for t
 ```
 
 ### context
-Allows functions to be executed in a context
+Allows functions to be executed in a context. Could allow the 'closure' of a
+function to be exposed. Might need prototypically linked contexts for this to
+work
 
 ```js
   function setATo5AndAddAWithB() withContext {
     a = 5
     return a + b
   }
+  // or (pipe indicates blocked scope)
+  setATo5AndAddAWithB {|
+    a = 5
+    return a + b
+  |}
 
   setATo5AndAddAWithB(ç:{a: 1, b: 2}) // ç: sets the context
   //=>
   /*
   function setATo5AndAddAWithB(){
     var context = setATo5AndAddAWithB.context
+    setATo5AndAddAWithB.context = null
     context.a = 5
     return context.a + context.b
   }
@@ -210,7 +233,7 @@ Allows functions to be executed in a context
 
   setATo5AndAddAWithB()
 
-  setATo5AndAddAWithB.context = null
+
   */
 
 ```
@@ -236,7 +259,44 @@ Allows functions to be executed in a context
   }
   */
 ```
+ or
 
+ Cannot just use {...} as it is valid js
+ ```js
+ f{
+   // do something
+ }
+ ```
+ explicit functions with explicit returns
+ ```js
+
+ f{
+  // do something and last expression will be returned
+ >}
+ ```
+
+ Debug blocks. Run by default. Removed by compiling with --remove-debug-blocks
+ Rather then removing them it could just comment them out and let uglification
+ handle their removal
+ ```js
+ debug{
+   assert typeof object == 'object'
+   inspect object //=> pretty print object
+   puts object //=> display string representation of object
+ }
+ //=>
+ var __debug = require('teascript/debug');
+ ___debug(function myFunc(){
+   var context = myFunc.context;
+   myFunc.context = null;
+   context.assert(typeof object =='object')
+   context.inspect(object)
+   context.puts(object)
+ });
+ ```
+ Might be a use case for functions with contexts. Doing this would allow people
+ to change the default behaviour of assert, inspect, puts etc. Also prevents
+ global pollution
 
 ### No commas
 
@@ -260,3 +320,13 @@ Could use annotations to provide hook points
  @sql
  vehicleQuery = 'select * from vehicles'
  ```
+
+### DANGER ZONE
+
+'danger zone'; when doing something valid syntatically valid js but warned
+against by default
+
+### Editor features
+
+Provide visual indicator of implicit returns. Maybe this suggests that it is a
+bad idea...
