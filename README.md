@@ -69,7 +69,35 @@ Note this is very early stage and definitely contains traces of javascript. Synt
 
   linkedList.head()  == a //=> true
   linkedList.head().child() == b //=> true
-
+  
+  // Vectors
+  <1,2,3> dot <2,3,4>
+  // => 32
+  var x = <1,2,3>
+  var magnitude = |x|
+  // => 3.7416
+  
+  // Sets
+  var x = {1,2,3}
+  var y = {4,5} union x
+  // => {1,2,3,4,5}
+  var z = {5,6} intersect y
+  // => {5}
+  
+  // Tuples
+  var x = (A,B,C)
+  var y = x select 1,3
+  // => (A,C)
+  
+  function y () {
+    ("B", <1,2,3>, new Object())
+  }
+  
+  var x = y() select 2, 3
+  // => (<1,2,3>,{})
+  var _,x = y()
+  // => <1,2,3>
+  
   // Native html element support
 
   renderedProducts =  <ul><li>Pizza</li></ul>
