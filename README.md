@@ -69,7 +69,35 @@ Note this is very early stage and definitely contains traces of javascript. Synt
 
   linkedList.head()  == a //=> true
   linkedList.head().child() == b //=> true
-
+  
+  // Vectors
+  <1,2,3> dot <2,3,4>
+  // => 32
+  var x = <1,2,3>
+  var magnitude = |x|
+  // => 3.7416
+  
+  // Sets
+  var x = {1,2,3}
+  var y = {4,5} union x
+  // => {1,2,3,4,5}
+  var z = {5,6} intersect y
+  // => {5}
+  
+  // Tuples
+  var x = (A,B,C)
+  var y = x select 1,3
+  // => (A,C)
+  
+  function y () {
+    ("B", <1,2,3>, new Object())
+  }
+  
+  var x = y() select 2, 3
+  // => (<1,2,3>,{})
+  var _,x = y()
+  // => <1,2,3>
+  
   // Native html element support
 
   renderedProducts =  <ul><li>Pizza</li></ul>
@@ -163,13 +191,38 @@ Calling proto() will call the method with the same name in the prototype
 
 ```js
 
-  function Animal(){}
-
-  a = new Animal()
-
-  a.has4Legs = function(){
-    return proto()
+  function Alive () {
+    // ...
   }
+  
+  Alive.prototype.heart = function () {
+    return 10;
+  }
+  
+  function Alive >> Animal() {
+    // ...
+  }
+  
+  Animal.prototype.heart = function() {
+    return 5;
+  }
+  
+  function Animal >> Beaver {
+    // automatically extends prototype chain for beaver.
+  }
+  
+  Beaver.prototype.heart = function() {
+    return proto(1, args...); // Return 5. Went one level up the tree explicitly.
+  }
+  
+  // OR
+  
+  Beaver.prototype.heart = function() {
+    return proto(2, args...); // Returns 10. Went two levels up the tree explicitly.
+  }
+  
+  var beaver = new Beaver();
+  
   //=>
   /*
   a.has4Legs = function(){
