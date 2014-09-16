@@ -195,7 +195,7 @@ Calling proto() will call the method with the same name in the prototype
     // ...
   }
   
-  Alive.prototype.heartrate = function () {
+  Alive.prototype.heart = function () {
     return 10;
   }
   
@@ -203,7 +203,7 @@ Calling proto() will call the method with the same name in the prototype
     // ...
   }
   
-  Animal.prototype.heartrate = function() {
+  Animal.prototype.heart = function() {
     return 5;
   }
   
