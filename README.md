@@ -191,13 +191,38 @@ Calling proto() will call the method with the same name in the prototype
 
 ```js
 
-  function Animal(){}
-
-  a = new Animal()
-
-  a.has4Legs = function(){
-    return proto()
+  function Alive () {
+    // ...
   }
+  
+  Alive.prototype.heartrate = function () {
+    return 10;
+  }
+  
+  function Alive >> Animal() {
+    // ...
+  }
+  
+  Animal.prototype.heartrate = function() {
+    return 5;
+  }
+  
+  function Animal >> Beaver {
+    // automatically extends prototype chain for beaver.
+  }
+  
+  Beaver.prototype.heart = function() {
+    return proto(1, args...); // Return 5. Went one level up the tree explicitly.
+  }
+  
+  // OR
+  
+  Beaver.prototype.heart = function() {
+    return proto(2, args...); // Returns 10. Went two levels up the tree explicitly.
+  }
+  
+  var beaver = new Beaver();
+  
   //=>
   /*
   a.has4Legs = function(){
